@@ -1,0 +1,36 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlinx-serialization'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+}
+
+android {
+    namespace 'com.anhndt.network'
+    compileSdk compile_sdk_version
+}
+
+secrets {
+    defaultPropertiesFileName = "secrets.defaults.properties"
+}
+
+dependencies {
+    implementation(project(":core:common"))
+
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_json_version"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:$retrofit2_kotlinx_serialization_converter_version"
+
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
+    implementation "com.squareup.okhttp3:logging-interceptor:$logging_interceptor_version"
+
+
+}
+
+kapt {
+    correctErrorTypes = true
+}

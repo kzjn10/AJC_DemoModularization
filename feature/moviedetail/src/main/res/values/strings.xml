@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Movie Detail</string>
+    <string name="loading">loading</string>
+    <string name="success">success</string>
+    <string name="error">error</string>
+    <string name="genres">Genres</string>
+    <string name="overview">Overview</string>
+    <string name="average_vote">Average vote</string>
+    <string name="vote_count">Vote count</string>
+    <string name="budget">Budget</string>
+</resources>
