@@ -1,13 +1,13 @@
 package com.anhndt.feature.home
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
@@ -31,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.anhndt.common.extensions.floorMod
 import com.anhndt.model.Movie
+import com.anhndt.systemdesign.component.CenterLoading
 import com.anhndt.systemdesign.component.MfaOutlineButton
 import com.anhndt.systemdesign.extensions.backdropGradientBackground
 import com.google.accompanist.pager.*
@@ -43,30 +44,41 @@ import kotlin.math.absoluteValue
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
     navigateToMovieDetail: (Movie) -> Unit
 ) {
 
-    val homeState: GetHomeDataState by viewModel.getHomeData.collectAsStateWithLifecycle()
+    val homeState: GetHomeDataState by homeViewModel.getHomeData.collectAsStateWithLifecycle()
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .backdropGradientBackground(), contentAlignment = Alignment.Center
     ) {
-        when (homeState) {
-            GetHomeDataState.Loading -> {
-                LoadingUI()
-            }
-            is GetHomeDataState.Success -> {
-                MoviesUI(
-                    movies = (homeState as GetHomeDataState.Success).movies,
-                    viewModel = viewModel,
-                    navigateToMovieDetail = navigateToMovieDetail,
-                )
-            }
-            is GetHomeDataState.Error -> {
-                ErrorUI()
+        Column {
+            /// Fake topappbar
+            TopAppBarUI(modifier = modifier.statusBarsPadding())
+
+            /// Tablayout
+            TabLayoutUI()
+
+            /// ContentUI
+            Box() {
+                when (homeState) {
+                    GetHomeDataState.Loading -> {
+                        LoadingUI()
+                    }
+                    is GetHomeDataState.Success -> {
+                        MoviesUI(
+                            movies = (homeState as GetHomeDataState.Success).movies,
+                            viewModel = homeViewModel,
+                            navigateToMovieDetail = navigateToMovieDetail,
+                        )
+                    }
+                    is GetHomeDataState.Error -> {
+                        ErrorUI(homeViewModel = homeViewModel)
+                    }
+                }
             }
         }
     }
@@ -74,18 +86,39 @@ fun HomeScreen(
 
 @Composable
 fun LoadingUI(modifier: Modifier = Modifier) {
-    Column(
+    Box(
         modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .fillMaxWidth()
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-
+        CenterLoading()
     }
 }
 
 @Composable
-fun ErrorUI(modifier: Modifier = Modifier) {
-    Text("Error")
+fun ErrorUI(modifier: Modifier = Modifier, homeViewModel: HomeViewModel) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .clickable {
+                homeViewModel.getHomeData()
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = null,
+                modifier = modifier.size(100.dp),
+                tint = Color.White
+            )
+            Spacer(modifier = modifier.height(12.dp))
+            Text(
+                text = stringResource(id = R.string.mfa_something_went_wrong),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
+            )
+        }
+    }
 }
 
 @Composable
@@ -95,24 +128,17 @@ fun MoviesUI(
     viewModel: HomeViewModel,
     navigateToMovieDetail: (Movie) -> Unit
 ) {
-    Column {
-        /// Fake topappbar
-        TopAppBarUI(modifier = modifier.statusBarsPadding())
-        /// Tablayout
-        TabLayoutUI()
-        /// Carousel
-        Box(modifier = modifier.weight(1f)) {
-            movies?.let { movies ->
-                if (movies.isNotEmpty())
-                    CarouselUI(
-                        movies = movies,
-                        viewModel = viewModel,
-                        navigateToMovieDetail = navigateToMovieDetail
-                    ) else
-                    LoadingUI()
-            } ?: run {
-                Text(text = "Empty")
-            }
+    Box(modifier = modifier.fillMaxSize()) {
+        movies?.let { movies ->
+            if (movies.isNotEmpty())
+                CarouselUI(
+                    movies = movies,
+                    viewModel = viewModel,
+                    navigateToMovieDetail = navigateToMovieDetail
+                ) else
+                LoadingUI()
+        } ?: run {
+            Text(text = "Empty")
         }
     }
 }
@@ -207,8 +233,7 @@ fun CarouselUI(
                 .padding(16.dp),
             pageCount = pageCount,
             pageIndexMapping = ::pageMapper,
-            activeColor = MaterialTheme.colorScheme.tertiary
-                ,
+            activeColor = MaterialTheme.colorScheme.tertiary,
         )
     }
 

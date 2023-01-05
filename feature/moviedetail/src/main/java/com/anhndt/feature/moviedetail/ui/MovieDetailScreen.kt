@@ -12,10 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,10 +25,7 @@ import coil.compose.AsyncImage
 import com.anhndt.feature.moviedetail.BuildConfig
 import com.anhndt.feature.moviedetail.R
 import com.anhndt.model.MovieDetail
-import com.anhndt.systemdesign.component.CenterLoading
-import com.anhndt.systemdesign.component.InfoChip
-import com.anhndt.systemdesign.component.PointInfo
-import com.anhndt.systemdesign.component.SectionInfo
+import com.anhndt.systemdesign.component.*
 import com.anhndt.systemdesign.extensions.backdropGradientBackground
 import com.anhndt.systemdesign.extensions.contentPadding
 import com.google.accompanist.flowlayout.FlowRow
@@ -169,10 +166,10 @@ fun MainContent(modifier: Modifier = Modifier, data: MovieDetail) {
         }
         item {
             SectionInfo(title = stringResource(id = R.string.overview))
-            Text(
-                text = data.overview,
-                textAlign = TextAlign.Justify,
+            Collapsible(
+                content = data.overview,
                 modifier = modifier.contentPadding(),
+                style = MaterialTheme.typography.bodyLarge.copy(color = Color.White)
             )
             Spacer(modifier = Modifier.height(18.dp))
         }

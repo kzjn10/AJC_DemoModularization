@@ -27,7 +27,7 @@ class HomeViewModel @Inject constructor(
         getHomeData()
     }
 
-    private fun getHomeData() = viewModelScope.launch {
+     fun getHomeData() = viewModelScope.launch {
         movieRepository.getMovies()
             .flowOn(Dispatchers.IO)
             .onStart { _getHomeData.value = GetHomeDataState.Loading }

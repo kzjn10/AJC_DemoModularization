@@ -1,0 +1,5 @@
+<resources>
+    <string name="mfa_show_more">Show more</string>
+    <string name="mfa_show_less">Show less</string>
+    <string name="mfa_something_went_wrong">Oppp, something went wrong</string>
+</resources>
