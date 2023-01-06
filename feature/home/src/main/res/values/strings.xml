@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">home</string>
+    <string name="mfa_something_went_wrong">Oppp, something went wrong</string>
 </resources>
